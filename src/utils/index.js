@@ -14,7 +14,11 @@ exports.question = (message) => {
   return new Promise((resolve) => rl.question(message, resolve));
 };
 
-exports.onlyNumbers = (text) => text.replace(/[^0-9]/g, "");
+const onlyNumbers = (text) => text.replace(/[^0-9]/g, "");
+
+exports.onlyNumbers = onlyNumbers;
+
+exports.toUserJid = (number) => `${onlyNumbers(number)}@s.whatsapp.net`
 
 exports.extractDataFromMessage = (webMessage) => {
   // Text Message
