@@ -1,8 +1,8 @@
 const {
-  dafault: makeWASocket,
+  default: makeWASocket,
+  DisconnectReason,
   useMultiFileAuthState,
   fetchLatestBaileysVersion,
-  DisconnectReason,
 } = require("@whiskeysockets/baileys");
 const path = require("path");
 const pino = require("pino");
@@ -25,7 +25,7 @@ exports.connect = async () => {
   });
 
   if (!socket.authState.creds.registred) {
-    const phoneNumber = await question("Informe seu numero de telefone");
+    const phoneNumber = await question("Informe seu numero de telefone: ");
 
     if (!phoneNumber) {
       throw new Error("Numero de telefone inválido");
@@ -50,4 +50,6 @@ exports.connect = async () => {
   });
 
   socket.ev.on("creds.update", saveCreds);
+
+  return socket;
 };

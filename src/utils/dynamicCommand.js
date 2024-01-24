@@ -6,6 +6,7 @@ const {
   InvalidParameterError,
 } = require("../errors");
 const { findCommandImport } = require(".");
+
 exports.dynamicCommand = async (paramsHandler) => {
   const { commandName, prefix, sendWarningReply, sendErrorReply } =
     paramsHandler;

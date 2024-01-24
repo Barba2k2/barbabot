@@ -64,7 +64,7 @@ exports.extractDataFromMessage = (webMessage) => {
   const [comand, ...args] = fullMessage.split(" ");
   const prefix = command.charAt(0);
 
-  const commandWithoutPrefix = comand.replace(new RegExp(`^[${PREFIX}]+`));
+  const commandWithoutPrefix = comand.replace(new RegExp(`^[${PREFIX}]+`), "");
 
   return {
     remoteJid: webMessage?.key?.remoteJid,
@@ -149,6 +149,8 @@ exports.findCommandImport = (commandName) => {
       continue;
     }
 
+    console.log(commands);
+
     const targetCommand = commands.find((cmd) =>
       cmd.commands.map((cmd) => this.formatCommand(cmd)).includes(commandName)
     );
@@ -182,7 +184,8 @@ exports.readCommandImports = () => {
         (file) =>
           !file.startsWith("_") &&
           (file.endsWith(".js") || file.endsWith(".ts"))
-      );
+      )
+      .map((file) => require(path.join(subdirectoryPath, file)));
 
     commandImports[subdir] = files;
   }
