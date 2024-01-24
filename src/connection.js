@@ -39,6 +39,15 @@ exports.connect = async () => {
   socket.ev.on("connection.update", (update) => {
     const { connection, lastDisconnect } = update;
 
-    const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
+    if (connection === "close") {
+      const shouldReconnect =
+        lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
+
+      if (shouldReconnect) {
+        this.connect();
+      }
+    }
   });
+
+  socket.ev.on("creds.update", saveCreds);
 };
