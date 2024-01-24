@@ -22,8 +22,6 @@ exports.dynamicCommand = async (paramsHandler) => {
   try {
     await command.handle({ ...paramsHandler, type });
   } catch (err) {
-    console.log(`Error: ${err}`);
-
     if (err instanceof InvalidParameterError) {
       await sendWarningReply(`Invalid Parameters! ${err.message}`);
     } else if (err instanceof WarningError) {
@@ -31,10 +29,10 @@ exports.dynamicCommand = async (paramsHandler) => {
     } else if (err instanceof DangerError) {
       await sendErrorReply(`Warning: ${err.message}`);
     } else {
+      console.log(`Error: ${err}`);
       await sendErrorReply(`An error ocurred on executing the command: ${command.name}! The developer is notified!!
       
       📄 *Error details:* ${err.message}`);
     }
   }
 };
-

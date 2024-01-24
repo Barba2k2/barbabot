@@ -1,11 +1,12 @@
 const { PREFIX } = require("../../config");
+const { menuMessage } = require("../../utils/messages");
 
 module.exports = {
-  name: "command",
-  description: "Command description",
-  commands: ["command1", "command2"],
-  usage: `${PREFIX}command`,
-  handle: async ({}) => {
-    // command code
+  name: "menu",
+  description: "Command menu",
+  commands: ["menu", "help"],
+  usage: `${PREFIX}menu`,
+  handle: async ({ sendReply }) => {
+    await sendReply(`\n\n${menuMessage}`);
   },
 };

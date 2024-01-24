@@ -1,6 +1,7 @@
 const { extractDataFromMessage, baileysIs, download } = require(".");
 const { BOT_EMOJI } = require("../config");
 const fs = require("fs");
+const { waitMessage } = require("../utils/messages");
 
 exports.loadCommomFunctions = ({ socket, webMessage }) => {
   const { remoteJid, prefix, commandName, args, userJid, isReply, replyJid } =
@@ -68,7 +69,7 @@ exports.loadCommomFunctions = ({ socket, webMessage }) => {
 
   const sendWaitReply = async (text) => {
     await sendWaitReact();
-    return await sendReply(`⏳ ${text}`);
+    return await sendReply(`⏳ ${text || waitMessage}`);
   };
 
   const sendWarningReply = async (text) => {
