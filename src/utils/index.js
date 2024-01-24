@@ -1,8 +1,9 @@
 const { downloadContentFromMessage } = require("@whiskeysockets/baileys");
 const readline = require("readline");
-const { PREFIX, TEMP_DIR } = require("../config");
+const { PREFIX, TEMP_DIR, COMMANDS_DIR: COMMANDS_DIR } = require("../config");
 const path = require("path");
 const { whiteFile: writeFile } = require("fs/promises");
+const fs = require("fs");
 
 exports.question = (message) => {
   const rl = readline.createInterface({
@@ -86,6 +87,10 @@ exports.splitByCharacters = (str, characters) => {
     .filter(Boolean);
 };
 
+exports.onlyLettersAndNumbers = (text) => {
+  return text.replace(/[^a-zA-Z0-9]/g, "");
+};
+
 exports.formatCommand = (text) => {
   return this.onlyLettersAndNumbers(
     this.removeAccentsAndSpecialCharacters(text.toLocaleLowerCase().trim())
@@ -131,4 +136,56 @@ exports.download = async (webMessage, fileName, context, extension) => {
   await writeFile(filePath, buffer);
 
   return filePath;
+};
+
+exports.findCommandImport = (commandName) => {
+  const command = this.readCommandImports();
+
+  let typeReturn = "";
+  let targetCommandReturn = null;
+
+  for (const [type, commands] of Object.entries(command)) {
+    if (!commands.length) {
+      continue;
+    }
+
+    const targetCommand = commands.find((cmd) =>
+      cmd.commands.map((cmd) => this.formatCommand(cmd)).includes(commandName)
+    );
+
+    if (targetCommand) {
+      typeReturn = type;
+      targetCommandReturn = targetCommand;
+      break;
+    }
+  }
+
+  return {
+    type: typeReturn,
+    command: targetCommandReturn,
+  };
+};
+
+exports.readCommandImports = () => {
+  const subdirectors = fs
+    .readdirSync(COMMANDS_DIR, { withFileTypes: true })
+    .filter((directory) => directory.isDirectory())
+    .map((directory) => directory.name);
+
+  const commandImports = {};
+
+  for (const subdir of subdirectors) {
+    const subdirectoryPath = path.join(COMMANDS_DIR, subdir);
+    const files = fs
+      .readdirSync(subdirectoryPath)
+      .filter(
+        (file) =>
+          !file.startsWith("_") &&
+          (file.endsWith(".js") || file.endsWith(".ts"))
+      );
+
+    commandImports[subdir] = files;
+  }
+
+  return commandImports;
 };
